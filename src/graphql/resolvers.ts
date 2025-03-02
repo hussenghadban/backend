@@ -89,17 +89,41 @@ export const resolvers = {
         },
       });
     },
-    deleteCategory: async (_: any, { id }: { id: string }) => {
+   deleteCategory: async (_: any, { id }: { id: string }) => {
+    try {
+      // Delete all products associated with this category first
+      await prisma.product.deleteMany({ where: { categoryId: id } });
+
+      // Delete the category
       await prisma.category.delete({ where: { id } });
+
       return "Category deleted successfully!";
-    },
-    deleteSubcategory: async (_: any, { id }: { id: string }) => {
+    } catch (error: any) {
+      throw new Error("Failed to delete category: " + error.message);
+    }
+  },
+
+  deleteSubcategory: async (_: any, { id }: { id: string }) => {
+    try {
+      // Delete all products associated with this subcategory first
+      await prisma.product.deleteMany({ where: { subcategoryId: id } });
+
+      // Delete the subcategory
       await prisma.subcategory.delete({ where: { id } });
+
       return "Subcategory deleted successfully!";
-    },
-    deleteProduct: async (_: any, { id }: { id: string }) => {
+    } catch (error: any) {
+      throw new Error("Failed to delete subcategory: " + error.message);
+    }
+  },
+
+  deleteProduct: async (_: any, { id }: { id: string }) => {
+    try {
       await prisma.product.delete({ where: { id } });
       return "Product deleted successfully!";
-    },
+    } catch (error: any) {
+      throw new Error("Failed to delete product: " + error.message);
+    }
+  },
   },
 };
